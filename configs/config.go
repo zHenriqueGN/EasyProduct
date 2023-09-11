@@ -5,8 +5,6 @@ import (
 	"github.com/spf13/viper"
 )
 
-var cfg *conf
-
 type conf struct {
 	DBDriver      string `mapstructure:"DB_DRIVER"`
 	DBHost        string `mapstructure:"DB_HOST"`
@@ -26,6 +24,7 @@ func LoadConfig() *conf {
 	if err != nil {
 		panic(err)
 	}
+	var cfg *conf
 	err = viper.Unmarshal(&cfg)
 	if err != nil {
 		panic(err)
