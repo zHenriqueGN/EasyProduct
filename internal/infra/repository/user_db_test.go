@@ -48,8 +48,11 @@ func TestUserRepository_FindByEmail(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	user, err = repository.FindByEmail("john.doe@example.com")
+	userFound, err := repository.FindByEmail("john.doe@example.com")
 	assert.Nil(t, err)
-	assert.NotNil(t, user)
-
+	assert.NotNil(t, userFound)
+	assert.Equal(t, user.ID, userFound.ID)
+	assert.Equal(t, user.Name, userFound.Name)
+	assert.Equal(t, user.Email, userFound.Email)
+	assert.Equal(t, user.Password, userFound.Password)
 }
