@@ -1,4 +1,4 @@
-package database
+package repository
 
 import "github.com/zHenriqueGN/EasyProduct/internal/entity"
 

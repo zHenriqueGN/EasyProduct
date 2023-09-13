@@ -1,4 +1,4 @@
-package database
+package repository
 
 import (
 	"database/sql"
@@ -44,10 +44,11 @@ func (u *UserRepository) FindByEmail(email string) (*entity.User, error) {
 	}
 	if row.Next() {
 		var user entity.User
-		err = row.Scan(&user)
+		err = row.Scan(&user.ID, &user.Name, &user.Email, &user.Password)
 		if err != nil {
 			return nil, err
 		}
+		return &user, nil
 	}
 	return nil, ErrUserNotFound
 }
