@@ -110,7 +110,7 @@ func (p *ProductRepository) Delete(id string) error {
 	if err != nil {
 		return err
 	}
-	stmt, err := p.DB.Prepare("DELETE FROM product WHERE id = ?")
+	stmt, err := p.DB.Prepare("DELETE FROM products WHERE id = ?")
 	if err != nil {
 		return err
 	}
