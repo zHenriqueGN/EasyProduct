@@ -4,8 +4,8 @@ go 1.20
 
 require (
 	github.com/go-chi/jwtauth/v5 v5.1.1
+	github.com/go-sql-driver/mysql v1.7.1
 	github.com/google/uuid v1.1.2
-	github.com/mattn/go-sqlite3 v1.14.17
 	github.com/spf13/viper v1.16.0
 	github.com/stretchr/testify v1.8.4
 	golang.org/x/crypto v0.10.0
