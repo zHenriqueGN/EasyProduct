@@ -20,12 +20,12 @@ func NewProductRepository(DB *sql.DB) *ProductRepository {
 }
 
 func (p *ProductRepository) Create(product *entity.Product) error {
-	stmt, err := p.DB.Prepare("INSERT INTO products (id, name, price, created_at) VALUES (?, ?, ?, ?)")
+	stmt, err := p.DB.Prepare("INSERT INTO products (id, name, price) VALUES (?, ?, ?)")
 	if err != nil {
 		return err
 	}
 	defer stmt.Close()
-	_, err = stmt.Exec(product.ID, product.Name, product.Price, product.CreatedAt)
+	_, err = stmt.Exec(product.ID, product.Name, product.Price)
 	if err != nil {
 		return err
 	}
