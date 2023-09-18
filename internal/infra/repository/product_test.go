@@ -134,5 +134,8 @@ func TestProductRepository_FindAll(t *testing.T) {
 	assert.NotEmpty(t, products)
 	assert.Nil(t, err)
 	assert.Equal(t, 5, len(products))
-
+	products, err = repository.FindAll(0, 0)
+	assert.NotEmpty(t, products)
+	assert.Nil(t, err)
+	assert.Equal(t, 15, len(products))
 }
