@@ -24,10 +24,9 @@ type Product struct {
 
 func NewProduct(name string, price float64) (*Product, error) {
 	product := &Product{
-		ID:        entity.NewID(),
-		Name:      name,
-		Price:     price,
-		CreatedAt: time.Now(),
+		ID:    entity.NewID(),
+		Name:  name,
+		Price: price,
 	}
 	err := product.Validade()
 	if err != nil {

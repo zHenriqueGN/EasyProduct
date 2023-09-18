@@ -6,27 +6,30 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/zHenriqueGN/EasyProduct/internal/entity"
+	"github.com/zHenriqueGN/EasyProduct/internal/infra/database"
 )
 
-func createTestUsersTable(t *testing.T, DB *sql.DB) {
-	_, err := DB.Exec(`
-		CREATE TABLE users (
-			id TEXT PRIMARY KEY,
-			name TEXT NOT NULL,
-			email TEXT NOT NULL UNIQUE,
-			password TEXT NOT NULL
-		)`,
-	)
+func TruncatUsersTable(DB *sql.DB) error {
+	stmt, err := DB.Prepare("TRUNCATE TABLE users")
 	if err != nil {
-		t.Fatal(err)
+		return err
 	}
+	defer stmt.Close()
+	_, err = stmt.Exec()
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func TestUserRepository_Create(t *testing.T) {
-	DB := NewSQLiteDB(t)
+	DB := database.ConnectToMySQLDB(testDBConn)
 	defer DB.Close()
-	createTestUsersTable(t, DB)
 	repository := NewUserRepository(DB)
+	err := TruncatUsersTable(DB)
+	if err != nil {
+		t.Fatal(err)
+	}
 	user, err := entity.NewUser("John Doe", "john.doe@example.com", "123456")
 	if err != nil {
 		t.Fatal(err)
@@ -36,10 +39,13 @@ func TestUserRepository_Create(t *testing.T) {
 }
 
 func TestUserRepository_FindByEmail(t *testing.T) {
-	DB := NewSQLiteDB(t)
+	DB := database.ConnectToMySQLDB(testDBConn)
 	defer DB.Close()
-	createTestUsersTable(t, DB)
 	repository := NewUserRepository(DB)
+	err := TruncatUsersTable(DB)
+	if err != nil {
+		t.Fatal(err)
+	}
 	user, err := entity.NewUser("John Doe", "john.doe@example.com", "123456")
 	if err != nil {
 		t.Fatal(err)
@@ -55,4 +61,26 @@ func TestUserRepository_FindByEmail(t *testing.T) {
 	assert.Equal(t, user.Name, userFound.Name)
 	assert.Equal(t, user.Email, userFound.Email)
 	assert.Equal(t, user.Password, userFound.Password)
+}
+
+func TestUserRepository_FindByEmailWhenEmailDoesNotExist(t *testing.T) {
+	DB := database.ConnectToMySQLDB(testDBConn)
+	defer DB.Close()
+	repository := NewUserRepository(DB)
+	err := TruncatUsersTable(DB)
+	if err != nil {
+		t.Fatal(err)
+	}
+	user, err := entity.NewUser("John Doe", "john.doe@example.com", "123456")
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = repository.Create(user)
+	if err != nil {
+		t.Fatal(err)
+	}
+	userFound, err := repository.FindByEmail("kevin.bacon@example.com")
+	assert.Nil(t, userFound)
+	assert.Equal(t, ErrUserNotFound, err)
+
 }
