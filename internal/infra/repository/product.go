@@ -53,20 +53,17 @@ func (p *ProductRepository) FindByID(id string) (*entity.Product, error) {
 	return nil, ErrProductNotFound
 }
 
-func (p *ProductRepository) FindAll(page, limit int, sort string) ([]entity.Product, error) {
+func (p *ProductRepository) FindAll(page, limit int) ([]entity.Product, error) {
 	var (
 		products     []entity.Product
 		findAllQuery string
 		queryParams  []any
 	)
-	if sort != "" && sort != "asc" && sort != "desc" {
-		sort = "asc"
-	}
 	if page != 0 && limit != 0 {
-		queryParams = append(queryParams, limit, (page-1)*limit, sort)
-		findAllQuery = "SELECT id, name, price, created_at FROM products LIMIT ? OFFSET ? ORDER BY created_at ?"
+		queryParams = append(queryParams, limit, (page-1)*limit)
+		findAllQuery = "SELECT id, name, price, created_at FROM products ORDER BY created_at LIMIT ? OFFSET ?"
 	} else {
-		findAllQuery = "SELECT id, name, price, created_at FROM products ORDER BY created_at ?"
+		findAllQuery = "SELECT id, name, price, created_at FROM products ORDER BY created_at"
 	}
 	stmt, err := p.DB.Prepare(findAllQuery)
 	if err != nil {
