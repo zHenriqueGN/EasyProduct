@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"database/sql"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -8,10 +9,27 @@ import (
 	"github.com/zHenriqueGN/EasyProduct/internal/infra/database"
 )
 
+func TruncatUsersTable(DB *sql.DB) error {
+	stmt, err := DB.Prepare("TRUNCATE TABLE users")
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+	_, err = stmt.Exec()
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func TestUserRepository_Create(t *testing.T) {
 	DB := database.ConnectToMySQLDB(testDBConn)
 	defer DB.Close()
 	repository := NewUserRepository(DB)
+	err := TruncatUsersTable(DB)
+	if err != nil {
+		t.Fatal(err)
+	}
 	user, err := entity.NewUser("John Doe", "john.doe@example.com", "123456")
 	if err != nil {
 		t.Fatal(err)
@@ -24,7 +42,11 @@ func TestUserRepository_FindByEmail(t *testing.T) {
 	DB := database.ConnectToMySQLDB(testDBConn)
 	defer DB.Close()
 	repository := NewUserRepository(DB)
-	user, err := entity.NewUser("Kevin Rue", "kevin.rue@example.com", "123456")
+	err := TruncatUsersTable(DB)
+	if err != nil {
+		t.Fatal(err)
+	}
+	user, err := entity.NewUser("John Doe", "john.doe@example.com", "123456")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -32,7 +54,7 @@ func TestUserRepository_FindByEmail(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	userFound, err := repository.FindByEmail("kevin.rue@example.com")
+	userFound, err := repository.FindByEmail("john.doe@example.com")
 	assert.Nil(t, err)
 	assert.NotNil(t, userFound)
 	assert.Equal(t, user.ID, userFound.ID)
