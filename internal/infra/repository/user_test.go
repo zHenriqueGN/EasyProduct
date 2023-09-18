@@ -62,3 +62,25 @@ func TestUserRepository_FindByEmail(t *testing.T) {
 	assert.Equal(t, user.Email, userFound.Email)
 	assert.Equal(t, user.Password, userFound.Password)
 }
+
+func TestUserRepository_FindByEmailWhenEmailDoesNotExist(t *testing.T) {
+	DB := database.ConnectToMySQLDB(testDBConn)
+	defer DB.Close()
+	repository := NewUserRepository(DB)
+	err := TruncatUsersTable(DB)
+	if err != nil {
+		t.Fatal(err)
+	}
+	user, err := entity.NewUser("John Doe", "john.doe@example.com", "123456")
+	if err != nil {
+		t.Fatal(err)
+	}
+	err = repository.Create(user)
+	if err != nil {
+		t.Fatal(err)
+	}
+	userFound, err := repository.FindByEmail("kevin.bacon@example.com")
+	assert.Nil(t, userFound)
+	assert.Equal(t, ErrUserNotFound, err)
+
+}
