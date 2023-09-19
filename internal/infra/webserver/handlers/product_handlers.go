@@ -8,6 +8,7 @@ import (
 	"github.com/zHenriqueGN/EasyProduct/internal/dto"
 	"github.com/zHenriqueGN/EasyProduct/internal/entity"
 	"github.com/zHenriqueGN/EasyProduct/internal/infra/repository"
+	entityPkg "github.com/zHenriqueGN/EasyProduct/pkg/entity"
 )
 
 type ProductHandler struct {
@@ -52,4 +53,34 @@ func (h *ProductHandler) GetProduct(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(product)
+}
+
+func (h *ProductHandler) UpdateProduct(w http.ResponseWriter, r *http.Request) {
+	ID := chi.URLParam(r, "id")
+	if ID == "" {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	var product entity.Product
+	err := json.NewDecoder(r.Body).Decode(&product)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	product.ID, err = entityPkg.ParseID(ID)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	_, err = h.ProductRepository.FindByID(ID)
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
+	err = h.ProductRepository.Update(&product)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	w.WriteHeader(http.StatusNoContent)
 }
