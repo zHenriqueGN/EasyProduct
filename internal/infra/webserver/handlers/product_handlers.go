@@ -84,3 +84,22 @@ func (h *ProductHandler) UpdateProduct(w http.ResponseWriter, r *http.Request) {
 	}
 	w.WriteHeader(http.StatusNoContent)
 }
+
+func (h *ProductHandler) DeleteProduct(w http.ResponseWriter, r *http.Request) {
+	ID := chi.URLParam(r, "id")
+	if ID == "" {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	_, err := h.ProductRepository.FindByID(ID)
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
+	err = h.ProductRepository.Delete(ID)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	w.WriteHeader(http.StatusNoContent)
+}
