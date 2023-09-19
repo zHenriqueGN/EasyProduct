@@ -18,7 +18,7 @@ func main() {
 	productRepository := repository.NewProductRepository(DB)
 	productHandler := handlers.NewProductHandler(productRepository)
 	userRepository := repository.NewUserRepository(DB)
-	userHandler := handlers.NewUserHandler(userRepository)
+	userHandler := handlers.NewUserHandler(userRepository, cfg.TokenAuth, cfg.JWTExperesIn)
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
 	r.Post("/products", productHandler.CreateProduct)
@@ -27,5 +27,6 @@ func main() {
 	r.Put("/products/{id}", productHandler.UpdateProduct)
 	r.Delete("/products/{id}", productHandler.DeleteProduct)
 	r.Post("/users", userHandler.CreateUser)
+	r.Post("/users/getjwt", userHandler.GetJWT)
 	http.ListenAndServe(":8000", r)
 }
