@@ -23,7 +23,7 @@ func TruncatUsersTable(DB *sql.DB) error {
 }
 
 func TestUserRepository_Create(t *testing.T) {
-	DB := database.ConnectToMySQLDB(testDBConn)
+	DB := database.ConnectToDatabase(testDBDriver, testDBConn)
 	defer DB.Close()
 	repository := NewUserRepository(DB)
 	err := TruncatUsersTable(DB)
@@ -39,7 +39,7 @@ func TestUserRepository_Create(t *testing.T) {
 }
 
 func TestUserRepository_FindByEmail(t *testing.T) {
-	DB := database.ConnectToMySQLDB(testDBConn)
+	DB := database.ConnectToDatabase(testDBDriver, testDBConn)
 	defer DB.Close()
 	repository := NewUserRepository(DB)
 	err := TruncatUsersTable(DB)
@@ -64,7 +64,7 @@ func TestUserRepository_FindByEmail(t *testing.T) {
 }
 
 func TestUserRepository_FindByEmailWhenEmailDoesNotExist(t *testing.T) {
-	DB := database.ConnectToMySQLDB(testDBConn)
+	DB := database.ConnectToDatabase(testDBDriver, testDBConn)
 	defer DB.Close()
 	repository := NewUserRepository(DB)
 	err := TruncatUsersTable(DB)

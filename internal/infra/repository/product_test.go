@@ -12,10 +12,12 @@ import (
 )
 
 var (
-	testDBConn string
+	testDBDriver string
+	testDBConn   string
 )
 
 func init() {
+	testDBDriver = "mysql"
 	testDBConn = "root:secret@tcp(localhost:3306)/easyproduct?charset=utf8&parseTime=True&loc=Local"
 }
 
@@ -33,7 +35,7 @@ func TruncateProductsTable(DB *sql.DB) error {
 }
 
 func TestProductRepository_Create(t *testing.T) {
-	DB := database.ConnectToMySQLDB(testDBConn)
+	DB := database.ConnectToDatabase(testDBDriver, testDBConn)
 	defer DB.Close()
 	repository := NewProductRepository(DB)
 	product, err := entity.NewProduct("Product 1", 199.99)
@@ -45,7 +47,7 @@ func TestProductRepository_Create(t *testing.T) {
 }
 
 func TestProductRepository_FindByID(t *testing.T) {
-	DB := database.ConnectToMySQLDB(testDBConn)
+	DB := database.ConnectToDatabase(testDBDriver, testDBConn)
 	defer DB.Close()
 	repository := NewProductRepository(DB)
 	product, err := entity.NewProduct("Product 1", 199.99)
@@ -66,7 +68,7 @@ func TestProductRepository_FindByID(t *testing.T) {
 }
 
 func TestProductRepository_Update(t *testing.T) {
-	DB := database.ConnectToMySQLDB(testDBConn)
+	DB := database.ConnectToDatabase(testDBDriver, testDBConn)
 	defer DB.Close()
 	repository := NewProductRepository(DB)
 	product, err := entity.NewProduct("Product 1", 199.99)
@@ -90,7 +92,7 @@ func TestProductRepository_Update(t *testing.T) {
 }
 
 func TestProductRepository_Delete(t *testing.T) {
-	DB := database.ConnectToMySQLDB(testDBConn)
+	DB := database.ConnectToDatabase(testDBDriver, testDBConn)
 	defer DB.Close()
 	repository := NewProductRepository(DB)
 	product, err := entity.NewProduct("Product 1", 199.99)
@@ -109,7 +111,7 @@ func TestProductRepository_Delete(t *testing.T) {
 }
 
 func TestProductRepository_FindAll(t *testing.T) {
-	DB := database.ConnectToMySQLDB(testDBConn)
+	DB := database.ConnectToDatabase(testDBDriver, testDBConn)
 	defer DB.Close()
 	repository := NewProductRepository(DB)
 	err := TruncateProductsTable(DB)
