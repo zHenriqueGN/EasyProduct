@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 
+	"github.com/go-chi/chi/v5"
 	"github.com/zHenriqueGN/EasyProduct/internal/dto"
 	"github.com/zHenriqueGN/EasyProduct/internal/entity"
 	"github.com/zHenriqueGN/EasyProduct/internal/infra/repository"
@@ -35,4 +36,20 @@ func (h *ProductHandler) CreateProduct(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	w.WriteHeader(http.StatusCreated)
+}
+
+func (h *ProductHandler) GetProduct(w http.ResponseWriter, r *http.Request) {
+	ID := chi.URLParam(r, "id")
+	if ID == "" {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	product, err := h.ProductRepository.FindByID(ID)
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(product)
 }
