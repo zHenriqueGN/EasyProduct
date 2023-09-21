@@ -6,6 +6,7 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+	"github.com/go-chi/jwtauth/v5"
 	"github.com/zHenriqueGN/EasyProduct/configs"
 	"github.com/zHenriqueGN/EasyProduct/internal/infra/database"
 	"github.com/zHenriqueGN/EasyProduct/internal/infra/repository"
@@ -18,14 +19,21 @@ func main() {
 	productRepository := repository.NewProductRepository(DB)
 	productHandler := handlers.NewProductHandler(productRepository)
 	userRepository := repository.NewUserRepository(DB)
-	userHandler := handlers.NewUserHandler(userRepository, cfg.TokenAuth, cfg.JWTExperesIn)
+	userHandler := handlers.NewUserHandler(userRepository)
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
-	r.Post("/products", productHandler.CreateProduct)
-	r.Get("/products", productHandler.GetProducts)
-	r.Get("/products/{id}", productHandler.GetProduct)
-	r.Put("/products/{id}", productHandler.UpdateProduct)
-	r.Delete("/products/{id}", productHandler.DeleteProduct)
+	r.Use(middleware.Recoverer)
+	r.Use(middleware.WithValue("jwt", cfg.TokenAuth))
+	r.Use(middleware.WithValue("jwtExpiresIn", cfg.JWTExpiresIn))
+	r.Route("/products", func(r chi.Router) {
+		r.Use(jwtauth.Verifier(cfg.TokenAuth))
+		r.Use(jwtauth.Authenticator)
+		r.Post("/", productHandler.CreateProduct)
+		r.Get("/", productHandler.GetProducts)
+		r.Get("/{id}", productHandler.GetProduct)
+		r.Put("/{id}", productHandler.UpdateProduct)
+		r.Delete("/{id}", productHandler.DeleteProduct)
+	})
 	r.Post("/users", userHandler.CreateUser)
 	r.Post("/users/getjwt", userHandler.GetJWT)
 	http.ListenAndServe(":8000", r)

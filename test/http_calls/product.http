@@ -1,5 +1,6 @@
 POST http://localhost:8000/products HTTP/1.1
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2OTUxNjcyODEsInN1YiI6IjZhOWUxMjE3LTY1NGUtNDcyMS04YjA1LTkxOGNkYzFlMWViNiJ9.ujtXRoSWX1jBdhbNUnw3fLlbQlSxElEXR5K7xL0zeso
 
 {
     "name": "Product 79",
@@ -10,16 +11,19 @@ Content-Type: application/json
 
 GET http://localhost:8000/products?page=1&limit=10 HTTP/1.1
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2OTUxNjcyODEsInN1YiI6IjZhOWUxMjE3LTY1NGUtNDcyMS04YjA1LTkxOGNkYzFlMWViNiJ9.ujtXRoSWX1jBdhbNUnw3fLlbQlSxElEXR5K7xL0zeso
 
 ###
 
 GET http://localhost:8000/products/f81a1f78-5567-4b5d-bf31-4fbde6872e2d HTTP/1.1
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2OTUxNjcyODEsInN1YiI6IjZhOWUxMjE3LTY1NGUtNDcyMS04YjA1LTkxOGNkYzFlMWViNiJ9.ujtXRoSWX1jBdhbNUnw3fLlbQlSxElEXR5K7xL0zeso
 
 ###
 
 PUT http://localhost:8000/products/f81a1f78-5567-4b5d-bf31-4fbde6872e2d HTTP/1.1
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2OTUxNjcyODEsInN1YiI6IjZhOWUxMjE3LTY1NGUtNDcyMS04YjA1LTkxOGNkYzFlMWViNiJ9.ujtXRoSWX1jBdhbNUnw3fLlbQlSxElEXR5K7xL0zeso
 
 {
     "name": "Product 101",
@@ -30,3 +34,4 @@ Content-Type: application/json
 
 DELETE http://localhost:8000/products/f81a1f78-5567-4b5d-bf31-4fbde6872e2d HTTP/1.1
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2OTUxNjcyODEsInN1YiI6IjZhOWUxMjE3LTY1NGUtNDcyMS04YjA1LTkxOGNkYzFlMWViNiJ9.ujtXRoSWX1jBdhbNUnw3fLlbQlSxElEXR5K7xL0zeso

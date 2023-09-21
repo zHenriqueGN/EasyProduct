@@ -13,12 +13,10 @@ import (
 
 type UserHandler struct {
 	UserRepository repository.UserInterface
-	JWT            *jwtauth.JWTAuth
-	JWTExperiesIn  int
 }
 
-func NewUserHandler(userRepository repository.UserInterface, jwt *jwtauth.JWTAuth, jwtExperiesIn int) *UserHandler {
-	return &UserHandler{UserRepository: userRepository, JWT: jwt, JWTExperiesIn: jwtExperiesIn}
+func NewUserHandler(userRepository repository.UserInterface) *UserHandler {
+	return &UserHandler{UserRepository: userRepository}
 }
 
 func (h *UserHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
@@ -57,9 +55,11 @@ func (h *UserHandler) GetJWT(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusUnauthorized)
 		return
 	}
-	_, token, err := h.JWT.Encode(map[string]any{
+	JWT := r.Context().Value("jwt").(*jwtauth.JWTAuth)
+	JWTExpiresIn := r.Context().Value("jwtExpiresIn").(int)
+	_, token, err := JWT.Encode(map[string]any{
 		"sub": user.ID.String(),
-		"exp": time.Now().Add(time.Second * time.Duration(h.JWTExperiesIn)).Unix(),
+		"exp": time.Now().Add(time.Second * time.Duration(JWTExpiresIn)).Unix(),
 	})
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
