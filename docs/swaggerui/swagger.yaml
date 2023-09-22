@@ -44,7 +44,41 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ErrorMessage'          
+                $ref: '#/components/schemas/ErrorMessage'
+  /users/getjwt:
+    post:
+      tags:
+        - User
+      summary: Get JWT
+      description: Get the auth token
+      requestBody:
+        description: JSON to authenticate and get your auth token
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GetJWTInput'
+        required: true      
+      responses:
+        '200':
+          description: User authenticated, get your token
+        '400':
+          description: Cannot sign-in user with the data supplied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '401':
+          description: Cannot sign-n with the credentials supplied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'                
+        '500':
+          description: Error on the server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'             
 components:
   schemas:
     ErrorMessage:
@@ -65,3 +99,12 @@ components:
         password:
           type: string
           example: "123456"
+    GetJWTInput:
+      type: object
+      properties:
+        email:
+          type: string
+          example: "john.doe@example.com"
+        password:
+          type: string
+          example: "123456"          
