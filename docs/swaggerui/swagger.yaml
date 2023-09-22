@@ -115,6 +115,37 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorMessage'
+    get:
+      tags:
+        - Product
+      summary: Get products
+      description: Get all the products registered on the server
+      security:
+        - JWTAuth: []
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+          required: false
+          description: number of the page to retrieve
+        - in: query
+          name: limit
+          schema:
+            type: integer
+          required: false
+          description: products quantity for page         
+      responses:
+        '200':
+          description: Products returned successfully
+        '401':
+          description: Your token has expired or is not valid                
+        '500':
+          description: Error on the server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
 components:
   securitySchemes:
     JWTAuth:
