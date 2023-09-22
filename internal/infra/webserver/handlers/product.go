@@ -77,7 +77,6 @@ func (h *ProductHandler) GetProduct(w http.ResponseWriter, r *http.Request) {
 	product, err := h.ProductRepository.FindByID(ID)
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
-		json.NewEncoder(w).Encode(Error{Message: err.Error()})
 		return
 	}
 	w.Header().Set("Content-Type", "application/json")
@@ -108,7 +107,6 @@ func (h *ProductHandler) UpdateProduct(w http.ResponseWriter, r *http.Request) {
 	_, err = h.ProductRepository.FindByID(ID)
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
-		json.NewEncoder(w).Encode(Error{Message: err.Error()})
 		return
 	}
 	err = h.ProductRepository.Update(&product)
@@ -130,7 +128,6 @@ func (h *ProductHandler) DeleteProduct(w http.ResponseWriter, r *http.Request) {
 	_, err := h.ProductRepository.FindByID(ID)
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
-		json.NewEncoder(w).Encode(Error{Message: err.Error()})
 		return
 	}
 	err = h.ProductRepository.Delete(ID)
