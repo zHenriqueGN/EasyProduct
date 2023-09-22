@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"errors"
 	"net/http"
 	"strconv"
 
@@ -25,16 +26,19 @@ func (h *ProductHandler) CreateProduct(w http.ResponseWriter, r *http.Request) {
 	err := json.NewDecoder(r.Body).Decode(&createProductInput)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(Error{Message: err.Error()})
 		return
 	}
 	product, err := entity.NewProduct(createProductInput.Name, createProductInput.Price)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(Error{Message: err.Error()})
 		return
 	}
 	err = h.ProductRepository.Create(product)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(Error{Message: err.Error()})
 		return
 	}
 	w.WriteHeader(http.StatusCreated)
@@ -56,6 +60,7 @@ func (h *ProductHandler) GetProducts(w http.ResponseWriter, r *http.Request) {
 	products, err := h.ProductRepository.FindAll(pageInt, limitInt)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(Error{Message: err.Error()})
 		return
 	}
 	w.Header().Set("Content-Type", "application/json")
@@ -66,6 +71,7 @@ func (h *ProductHandler) GetProduct(w http.ResponseWriter, r *http.Request) {
 	ID := chi.URLParam(r, "id")
 	if ID == "" {
 		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(Error{Message: errors.New("empty product id").Error()})
 		return
 	}
 	product, err := h.ProductRepository.FindByID(ID)
@@ -82,17 +88,20 @@ func (h *ProductHandler) UpdateProduct(w http.ResponseWriter, r *http.Request) {
 	ID := chi.URLParam(r, "id")
 	if ID == "" {
 		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(Error{Message: errors.New("empty product id").Error()})
 		return
 	}
 	var product entity.Product
 	err := json.NewDecoder(r.Body).Decode(&product)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(Error{Message: err.Error()})
 		return
 	}
 	product.ID, err = entityPkg.ParseID(ID)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(Error{Message: err.Error()})
 		return
 	}
 	_, err = h.ProductRepository.FindByID(ID)
@@ -103,6 +112,7 @@ func (h *ProductHandler) UpdateProduct(w http.ResponseWriter, r *http.Request) {
 	err = h.ProductRepository.Update(&product)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(Error{Message: err.Error()})
 		return
 	}
 	w.WriteHeader(http.StatusNoContent)
@@ -112,6 +122,7 @@ func (h *ProductHandler) DeleteProduct(w http.ResponseWriter, r *http.Request) {
 	ID := chi.URLParam(r, "id")
 	if ID == "" {
 		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(Error{Message: errors.New("empty product id").Error()})
 		return
 	}
 	_, err := h.ProductRepository.FindByID(ID)
@@ -122,6 +133,7 @@ func (h *ProductHandler) DeleteProduct(w http.ResponseWriter, r *http.Request) {
 	err = h.ProductRepository.Delete(ID)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(Error{Message: err.Error()})
 		return
 	}
 	w.WriteHeader(http.StatusNoContent)

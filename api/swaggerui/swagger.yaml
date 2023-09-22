@@ -1,0 +1,316 @@
+openapi: 3.0.3
+info:
+  title: EasyProduct
+  description: |-
+    This is a simple REST API to register and manage products
+  contact:
+    email: henriquegomesnunes19@gmail.com
+  license:
+    name: MIT
+    url: https://github.com/zHenriqueGN/EasyProduct/blob/main/LICENSE
+  version: 1.0.0
+servers:
+  - url: http://localhost:8000
+tags:
+  - name: User
+    description: Access to user functionalities
+  - name: Product
+    description: Operations about products
+paths:
+  /users:
+    post:
+      tags:
+        - User
+      summary: Create a new user
+      description: Create a new user to authenticate on API
+      requestBody:
+        description: Body to create a new user
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateUserInput'
+        required: true
+      responses:
+        '201':
+          description: User successfully created
+        '400':
+          description: Cannot create user with the data supplied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '500':
+          description: Error on the server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+  /users/getjwt:
+    post:
+      tags:
+        - User
+      summary: Get JWT
+      description: Get the auth token        
+      requestBody:
+        description: Body to authenticate and get your auth token
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GetJWTInput'
+        required: true      
+      responses:
+        '200':
+          description: User authenticated, get your token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetJWTOutput'
+        '400':
+          description: Cannot sign-in user with the data supplied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '401':
+          description: Cannot sign-n with the credentials supplied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'                
+        '500':
+          description: Error on the server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'             
+  /products:
+    post:
+      tags:
+        - Product
+      summary: Create a product
+      description: Create a new product
+      security:
+        - JWTAuth: []        
+      requestBody:
+        description: Body to create a new product
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateProductInput'
+        required: true      
+      responses:
+        '200':
+          description: Product created successfully
+        '400':
+          description: Cannot create product with the data supplied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '401':
+          description: Your token has expired or is not valid                
+        '500':
+          description: Error on the server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+    get:
+      tags:
+        - Product
+      summary: Get products
+      description: Get all the products registered on the server
+      security:
+        - JWTAuth: []
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+          required: false
+          description: number of the page to retrieve
+        - in: query
+          name: limit
+          schema:
+            type: integer
+          required: false
+          description: products quantity for page         
+      responses:
+        '200':
+          description: Products returned successfully
+        '401':
+          description: Your token has expired or is not valid                
+        '500':
+          description: Error on the server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+  /products/{productId}:
+    get:
+      tags:
+        - Product
+      summary: Get a product
+      description: Get a product by id
+      security:
+        - JWTAuth: []
+      parameters:
+        - in: path
+          name: productId
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: product id to retrieve     
+      responses:
+        '200':
+          description: Product returned successfully
+        '400':
+          description: Cannot fetch the product with the productId specified
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'          
+        '401':
+          description: Your token has expired or is not valid
+        '404':
+          description: Product not found                    
+        '500':
+          description: Error on the server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+    put:
+      tags:
+        - Product
+      summary: Update a product
+      description: Update a existing product
+      security:
+        - JWTAuth: []
+      parameters:
+        - in: path
+          name: productId
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: product id to update  
+      requestBody:
+        description: Body to update a product
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateProductInput'
+        required: true
+      responses:
+        '200':
+          description: Product updated successfully
+        '400':
+          description: Cannot update product with the data supplied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '401':
+          description: Your token has expired or is not valid
+        '404':
+          description: Product not found                       
+        '500':
+          description: Error on the server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+    delete:
+      tags:
+        - Product
+      summary: Delete a product
+      description: Delete a product by id
+      security:
+        - JWTAuth: []
+      parameters:
+        - in: path
+          name: productId
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: product id to delete     
+      responses:
+        '204':
+          description: Product deleted successfully
+        '400':
+          description: Cannot delete the product with the productId specified
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '401':
+          description: Your token has expired or is not valid
+        '404':
+          description: Product not found 
+        '500':
+          description: Error on the server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+components:
+  securitySchemes:
+    JWTAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT    
+  schemas:
+    ErrorMessage:
+      type: object
+      properties:
+        message:
+          type: string
+          example: error message sent by the server
+    CreateUserInput:
+      type: object
+      properties:
+        name:
+          type: string
+          example: "John Doe"
+        email:
+          type: string
+          example: "john.doe@example.com"
+        password:
+          type: string
+          example: "123456"
+    GetJWTInput:
+      type: object
+      properties:
+        email:
+          type: string
+          example: "john.doe@example.com"
+        password:
+          type: string
+          example: "123456"
+    GetJWTOutput:
+      type: object
+      properties:
+        access-token:
+          type: string
+          example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2OTU0MDYwMzIsInN1YiI6IjZhOWUxMjE3LTY1NGUtNDcyMS04YjA1LTkxOGNkYzFlMWViNiJ9.XmdZBdvz85kO2vukQ7Fd98Cky9V9S1mNhGGZ3Yw7r2c"       
+    CreateProductInput:
+      type: object
+      properties:
+        name:
+          type: string
+          example: "Product 1"
+        price:
+          type: number
+          example: 199.99
+    UpdateProductInput:
+      type: object
+      properties:
+        name:
+          type: string
+          example: "Product 1"
+        price:
+          type: number
+          example: 199.99           
