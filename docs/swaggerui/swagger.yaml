@@ -181,7 +181,47 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorMessage'
-
+    put:
+      tags:
+        - Product
+      summary: Update a product
+      description: Update a existing product
+      security:
+        - JWTAuth: []
+      parameters:
+        - in: path
+          name: productId
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: product id to update  
+      requestBody:
+        description: Body to update a product
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateProductInput'
+        required: true
+      responses:
+        '200':
+          description: Product updated successfully
+        '400':
+          description: Cannot update product with the data supplied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '401':
+          description: Your token has expired or is not valid
+        '404':
+          description: Product not found                       
+        '500':
+          description: Error on the server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
 components:
   securitySchemes:
     JWTAuth:
@@ -230,4 +270,13 @@ components:
           example: "Product 1"
         price:
           type: number
-          example: 199.99   
+          example: 199.99
+    UpdateProductInput:
+      type: object
+      properties:
+        name:
+          type: string
+          example: "Product 1"
+        price:
+          type: number
+          example: 199.99           
