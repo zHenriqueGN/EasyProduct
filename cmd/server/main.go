@@ -36,5 +36,7 @@ func main() {
 	})
 	r.Post("/users", userHandler.CreateUser)
 	r.Post("/users/getjwt", userHandler.GetJWT)
+	r.Handle("/swaggerui/*", http.StripPrefix("/swaggerui/", http.FileServer(http.Dir("./swaggerui"))))
+	fmt.Println("listening on http://localhost:8000")
 	http.ListenAndServe(":8000", r)
 }
