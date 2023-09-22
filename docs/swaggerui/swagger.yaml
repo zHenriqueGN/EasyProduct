@@ -35,10 +35,24 @@ paths:
           description: User successfully created
         '400':
           description: Cannot create user with the data supplied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
         '500':
           description: Error on the server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'          
 components:
   schemas:
+    ErrorMessage:
+      type: object
+      properties:
+        message:
+          type: string
+          example: error message sent by the server
     CreateUserInput:
       type: object
       properties:
