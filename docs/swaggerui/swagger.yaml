@@ -1,0 +1,53 @@
+openapi: 3.0.3
+info:
+  title: EasyProduct
+  description: |-
+    This is a simple REST API to register and manage products
+  contact:
+    email: henriquegomesnunes19@gmail.com
+  license:
+    name: MIT
+    url: https://github.com/zHenriqueGN/EasyProduct/blob/main/LICENSE
+  version: 1.0.0
+servers:
+  - url: http://localhost:8000
+tags:
+  - name: User
+    description: Access to user functionalities
+  - name: Product
+    description: Operations about products
+paths:
+  /users:
+    post:
+      tags:
+        - User
+      summary: Create a new user
+      description: Create a new user to authenticate on API
+      requestBody:
+        description: JSON to create a new user
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateUserInput'
+        required: true
+      responses:
+        '201':
+          description: User successfully created
+        '400':
+          description: Cannot create user with the data supplied
+        '500':
+          description: Error on the server
+components:
+  schemas:
+    CreateUserInput:
+      type: object
+      properties:
+        name:
+          type: string
+          example: "John Doe"
+        email:
+          type: string
+          example: "john.doe@example.com"
+        password:
+          type: string
+          example: "123456"
