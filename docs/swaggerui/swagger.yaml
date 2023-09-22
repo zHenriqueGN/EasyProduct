@@ -146,6 +146,42 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorMessage'
+  /products/{productId}:
+    get:
+      tags:
+        - Product
+      summary: Get a product
+      description: Get a product by id
+      security:
+        - JWTAuth: []
+      parameters:
+        - in: path
+          name: productId
+          schema:
+            type: string
+            format: uuid
+          required: true
+          description: product id to retrieve     
+      responses:
+        '200':
+          description: Product returned successfully
+        '400':
+          description: Cannot fetch the product with the productId specified
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'          
+        '401':
+          description: Your token has expired or is not valid
+        '404':
+          description: Product not found                    
+        '500':
+          description: Error on the server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+
 components:
   securitySchemes:
     JWTAuth:
