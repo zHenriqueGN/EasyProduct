@@ -72,8 +72,8 @@ func (h *UserHandler) GetJWT(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(Error{Message: err.Error()})
 		return
 	}
-	accessToken := map[string]string{
-		"AccessToken": token,
+	accessToken := dto.GetJWTOutput{
+		AccessToken: token,
 	}
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(accessToken)
