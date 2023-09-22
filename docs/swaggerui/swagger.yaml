@@ -24,7 +24,7 @@ paths:
       summary: Create a new user
       description: Create a new user to authenticate on API
       requestBody:
-        description: JSON to create a new user
+        description: Body to create a new user
         content:
           application/json:
             schema:
@@ -50,9 +50,9 @@ paths:
       tags:
         - User
       summary: Get JWT
-      description: Get the auth token
+      description: Get the auth token        
       requestBody:
-        description: JSON to authenticate and get your auth token
+        description: Body to authenticate and get your auth token
         content:
           application/json:
             schema:
@@ -61,6 +61,10 @@ paths:
       responses:
         '200':
           description: User authenticated, get your token
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetJWTOutput'
         '400':
           description: Cannot sign-in user with the data supplied
           content:
@@ -79,7 +83,44 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorMessage'             
+  /products:
+    post:
+      tags:
+        - Product
+      summary: Create a product
+      description: Create a new product
+      security:
+        - JWTAuth: []        
+      requestBody:
+        description: Body to create a new product
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateProductInput'
+        required: true      
+      responses:
+        '200':
+          description: Product created successfully
+        '400':
+          description: Cannot create product with the data supplied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '401':
+          description: Your token has expired or is not valid                
+        '500':
+          description: Error on the server
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
 components:
+  securitySchemes:
+    JWTAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT    
   schemas:
     ErrorMessage:
       type: object
@@ -107,4 +148,19 @@ components:
           example: "john.doe@example.com"
         password:
           type: string
-          example: "123456"          
+          example: "123456"
+    GetJWTOutput:
+      type: object
+      properties:
+        access-token:
+          type: string
+          example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2OTU0MDYwMzIsInN1YiI6IjZhOWUxMjE3LTY1NGUtNDcyMS04YjA1LTkxOGNkYzFlMWViNiJ9.XmdZBdvz85kO2vukQ7Fd98Cky9V9S1mNhGGZ3Yw7r2c"       
+    CreateProductInput:
+      type: object
+      properties:
+        name:
+          type: string
+          example: "Product 1"
+        price:
+          type: number
+          example: 199.99   
